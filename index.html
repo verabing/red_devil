@@ -113,16 +113,19 @@
 </div>
 
 <script>
-const sheetUrl = "https://docs.google.com/spreadsheets/d/1NkJQfFKc8MGfDWOWwyrRj7ZGn0Vwy0TMnfN2oC2TuXk/pub?output=csv";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZSZpyX1iBo2zONYrNCe1Z8xbFzKncfKbzt_I6Kriq8xqZB04JsQlvY33FnXbdwdsTVInKD3QoBZEv/pub?output=csv";
 
 fetch(sheetUrl)
   .then(res => res.text())
   .then(csv => {
-    const rows = csv.trim().split("\n").slice(1); // erste Zeile = Header
+    const rows = csv.trim().split("\n").slice(1); // Überspringt Header
     const gallery = document.getElementById("gallery");
 
     rows.forEach(row => {
-      const [link, style] = row.split(",");
+      // Semikolon statt Komma wegen europäischer CSVs
+      const [link, style] = row.split(";");
+      if (!link || !style) return; // überspringt leere Zeilen
+
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
@@ -131,7 +134,8 @@ fetch(sheetUrl)
       card.onclick = () => openModal(link.trim(), style.trim());
       gallery.appendChild(card);
     });
-  });
+  })
+  .catch(err => console.error("Fehler beim Laden der CSV:", err));
 
 const modal = document.getElementById("modal");
 const modalImg = document.getElementById("modal-img");
@@ -147,6 +151,7 @@ function openModal(src, caption) {
 closeBtn.onclick = () => modal.style.display = "none";
 modal.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 </script>
+
 
 
 </body>
