@@ -118,20 +118,25 @@ const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQZSZpyX1iBo2z
 fetch(sheetUrl)
   .then(res => res.text())
   .then(csv => {
-    const rows = csv.trim().split("\n").slice(1); // Überspringt Header
+    const rows = csv.trim().split("\n"); // keine slice(1), Header ist inhaltlich gleich
     const gallery = document.getElementById("gallery");
 
-    rows.forEach(row => {
-      // Semikolon statt Komma wegen europäischer CSVs
-      const [link, style] = row.split(";");
-      if (!link || !style) return; // überspringt leere Zeilen
+    rows.forEach((row, i) => {
+      // Headerzeile überspringen, falls sie so heisst
+      if (row.startsWith("Link")) return;
+
+      const parts = row.split(",");
+      const link = parts[0].trim();
+      const style = parts.slice(1).join(",").trim(); // Rest zusammensetzen, falls Kommas im Text
+
+      if (!link || !style) return;
 
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <img src="${link.trim()}" alt="">
-        <div class="caption">${style.trim()}</div>`;
-      card.onclick = () => openModal(link.trim(), style.trim());
+        <img src="${link}" alt="">
+        <div class="caption">${style}</div>`;
+      card.onclick = () => openModal(link, style);
       gallery.appendChild(card);
     });
   })
@@ -151,6 +156,7 @@ function openModal(src, caption) {
 closeBtn.onclick = () => modal.style.display = "none";
 modal.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 </script>
+
 
 
 
