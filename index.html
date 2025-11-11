@@ -113,22 +113,25 @@
 </div>
 
 <script>
-const images = [
-  {link: "https://cdn.midjourney.com/2080c2f0-b997-422b-acc0-44fdbe4f54d9/0_3.png", style: "Joost Swarte"},
-  {link: "https://cdn.midjourney.com/319e14c2-060c-49ba-8f28-2f79ccf5251b/0_3.png", style: "--sref 4124678929"},
-  {link: "https://cdn.midjourney.com/c4008077-0a11-4dd8-93a3-dd9754587a80/0_0.png", style: "--sref 2172472087"},
-  {link: "https://cdn.midjourney.com/4e47c583-cad4-45a5-b74e-f85397d6a1e6/0_1.png", style: "--sref 2452477690"}
-];
+const sheetUrl = "https://docs.google.com/spreadsheets/d/1NkJQfFKc8MGfDWOWwyrRj7ZGn0Vwy0TMnfN2oC2TuXk/pub?output=csv";
 
-const gallery = document.getElementById("gallery");
+fetch(sheetUrl)
+  .then(res => res.text())
+  .then(csv => {
+    const rows = csv.trim().split("\n").slice(1); // erste Zeile = Header
+    const gallery = document.getElementById("gallery");
 
-images.forEach(img => {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.innerHTML = `<img src="${img.link}" alt=""><div class="caption">${img.style}</div>`;
-  card.onclick = () => openModal(img.link, img.style);
-  gallery.appendChild(card);
-});
+    rows.forEach(row => {
+      const [link, style] = row.split(",");
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${link.trim()}" alt="">
+        <div class="caption">${style.trim()}</div>`;
+      card.onclick = () => openModal(link.trim(), style.trim());
+      gallery.appendChild(card);
+    });
+  });
 
 const modal = document.getElementById("modal");
 const modalImg = document.getElementById("modal-img");
@@ -144,6 +147,7 @@ function openModal(src, caption) {
 closeBtn.onclick = () => modal.style.display = "none";
 modal.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 </script>
+
 
 </body>
 </html>
