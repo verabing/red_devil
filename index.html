@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red Devil exhibition</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.5em;
+    letter-spacing: 1px;
+    z-index: 1000;
+  }
+
+  main {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .card {
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+  }
+
+  .card img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .caption {
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9em;
+    user-select: text;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+  }
+
+  .modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 80%;
+  }
+
+  .modal-caption {
+    text-align: center;
+    color: #ccc;
+    padding: 10px;
+    user-select: text;
+  }
+
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header>Red Devil exhibition</header>
+
+<main id="gallery"></main>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="modal-img">
+  <div class="modal-caption" id="modal-caption"></div>
+</div>
+
+<script>
+const images = [
+  {link: "https://cdn.midjourney.com/2080c2f0-b997-422b-acc0-44fdbe4f54d9/0_3.png", style: "Joost Swarte"},
+  {link: "https://cdn.midjourney.com/319e14c2-060c-49ba-8f28-2f79ccf5251b/0_3.png", style: "--sref 4124678929"},
+  {link: "https://cdn.midjourney.com/c4008077-0a11-4dd8-93a3-dd9754587a80/0_0.png", style: "--sref 2172472087"},
+  {link: "https://cdn.midjourney.com/4e47c583-cad4-45a5-b74e-f85397d6a1e6/0_1.png", style: "--sref 2452477690"}
+];
+
+const gallery = document.getElementById("gallery");
+
+images.forEach(img => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `<img src="${img.link}" alt=""><div class="caption">${img.style}</div>`;
+  card.onclick = () => openModal(img.link, img.style);
+  gallery.appendChild(card);
+});
+
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modal-img");
+const modalCaption = document.getElementById("modal-caption");
+const closeBtn = document.getElementsByClassName("close")[0];
+
+function openModal(src, caption) {
+  modal.style.display = "block";
+  modalImg.src = src;
+  modalCaption.textContent = caption;
+}
+
+closeBtn.onclick = () => modal.style.display = "none";
+modal.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+</script>
+
+</body>
+</html>
